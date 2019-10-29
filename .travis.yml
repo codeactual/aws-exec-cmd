@@ -1,0 +1,37 @@
+dist: bionic
+
+env:
+  # See the Development notes in README.md for instructions on how to generate this.
+  - secure: 'qWgCIruwCgPjr4sCuNjufFvLxXI/nfrutKhlLGDpUW7EKn5+BvWLhKgmVyGaJydC4zULy/MZvYzWqvSUrgQ/3FgpjrjXEyrwpPTzYmXqTh/aVey0UrBHTO882rnpOU0akjZ68k8KhZOryjIDA5i67hmOx9QQ2RHnG32H9n3UolKekeWdfeGCK4gf1D9opkHn41adUBwACdAkLuzWcPrz4DzjcA7TeuCjAh3ck7PCXouv/h47HUPRlG4flWsRhVK2ERkNyiNKw/paGcJ9yRrcYONE2/I9s8cWn32cW3JGzWpXWqx7MLDPwKK3kf9n7i9URS7eTlR7vis/1Z0+rlx7dl4dU7OPdAT3+Qr2X1Ra0SUNTOa6dlFJbaHduJfBvNSbbbgaFfMgwVsnUL6/qlykXwRrvv+cK+SRXwosJwpAbJBnPBYtF88RjjqGpZJYKKdDrEvG0Gcu33hhUvAYkWdu93tehOJeX4df/Vw1zW2ImQzWYO0oajDizbgZ9VD8ieXp/kejUb6EnMPH4CPty195hgNRXm3qF8lYOkXmUYk0qSIML50xTCR6X5bp6Gmq5M8w8KWfV5OmNyJbzXNQrBEN4OiF5XCsWqYFcbj5iw7Fhwsv5F+7CmYVfAZHh2kyCZnOcgMP/fXbfNgPWhwurvKOpU1Hoq36w22ICLf0lm8SrfY='
+
+language: go
+
+go:
+  - 1.x
+  - 1.12.x
+  - 1.13.x
+
+notifications:
+  email: false
+
+script:
+  # For 1.12 build
+  - export GO111MODULE=on
+  # Assert compilation
+  - make build
+  # Assert test suite
+  - make test-dep test
+  # Assert "go get" accessible
+  - mkdir $HOME/go_get_test
+  - cd $HOME/go_get_test
+  - go mod init go_get_test
+  - 'go get -v github.com/codeactual/aws-exec-cmd/cmd/aws-exec-cmd@${TRAVIS_COMMIT}'
+  - aws-exec-cmd --help
+  # Integration test
+  - cd -
+  - go get -v github.com/codeactual/aws-req/cmd/aws-req
+  - './build/aws-exec-cmd role --chain "env-triple,${ROLE_ARN}" -- aws-req "https://ec2.amazonaws.com/?Action=DescribeRegions&Version=2016-11-15"'
+  # Attempt to invalidate Github's cached badge images
+  - curl --silent --output hub-purge.sh https://raw.githubusercontent.com/codeactual/hub-purge/master/hub-purge.sh
+  - chmod +x ./hub-purge.sh
+  - ./hub-purge.sh codeactual/aws-exec-cmd
