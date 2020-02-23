@@ -227,7 +227,7 @@ func ResolveRoleChain(input *ResolveRoleChainInput) (accessKey string, secretAcc
 		if priorCredsExist {
 			assumeConfig.Credentials = credentials.NewStaticCredentials(prior.AccessKeyID, prior.SecretAccessKey, prior.SessionToken)
 		} else {
-			assumeConfig.Credentials = credentials.NewStaticCredentials("", "", "")
+			assumeConfig.Credentials = credentials.AnonymousCredentials
 		}
 
 		prior, err = GetAssumeRoleCreds(link, input, assumeConfig)

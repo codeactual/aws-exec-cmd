@@ -20,12 +20,12 @@ import (
 
 // Handler defines the sub-command flags and logic.
 type Handler struct {
-	handler.IO
+	handler.Session
 
 	// Auth acquires credentials from a cage/cli/handler/mixin/aws/auth.Provider implementation.
 	Auth auth.Mixin
 
-	// Exec runs a local command AWS credentials set in environment variables .
+	// Exec runs a local command AWS credentials set in environment variables.
 	Exec cmd_mixin.Exec
 
 	// RoleChain defines/collects the CLI flags and provides the implementation for Handler.Auth.
@@ -37,6 +37,8 @@ type Handler struct {
 // It implements cli/handler/cobra.Handler.
 func (h *Handler) Init() handler_cobra.Init {
 	h.Auth.RoleChainFlag = "chain" // use "role --chain" to avoid "role --role" invocation.
+
+	h.Exec = cmd_mixin.New()
 
 	return handler_cobra.Init{
 		Cmd: &cobra.Command{
@@ -62,15 +64,17 @@ func (h *Handler) BindFlags(cmd *cobra.Command) []string {
 // Run performs the sub-command logic.
 //
 // It implements cli/handler/cobra.Handler.
-func (h *Handler) Run(ctx context.Context, args []string) {
+func (h *Handler) Run(ctx context.Context, input handler.Input) {
 	creds, credsErr := h.Auth.Credentials(&h.RoleChain)
 	h.ExitOnErr(credsErr, "failed to acquire credentials", 1)
-	h.Exec.Do(ctx, creds, args)
+	h.Exec.Do(ctx, creds, input.Args)
 }
 
 // New returns a cobra command instance based on Handler.
-func New() *cobra.Command {
-	return handler_cobra.NewHandler(&Handler{})
+func NewCommand() *cobra.Command {
+	return handler_cobra.NewHandler(&Handler{
+		Session: &handler.DefaultSession{},
+	})
 }
 
 var _ handler_cobra.Handler = (*Handler)(nil)

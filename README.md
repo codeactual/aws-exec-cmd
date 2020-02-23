@@ -1,4 +1,4 @@
-# aws-exec-cmd [![GoDoc](https://godoc.org/github.com/codeactual/aws-exec-cmd?status.svg)](https://godoc.org/github.com/codeactual/aws-exec-cmd) [![Go Report Card](https://goreportcard.com/badge/github.com/codeactual/aws-exec-cmd)](https://goreportcard.com/report/github.com/codeactual/aws-exec-cmd) [![Build Status](https://travis-ci.org/codeactual/aws-exec-cmd.png)](https://travis-ci.org/codeactual/aws-exec-cmd)
+# aws-exec-cmd [![GoDoc](https://godoc.org/github.com/codeactual/aws-exec-cmd?status.svg)](https://pkg.go.dev/mod/github.com/codeactual/aws-exec-cmd) [![Go Report Card](https://goreportcard.com/badge/github.com/codeactual/aws-exec-cmd)](https://goreportcard.com/report/github.com/codeactual/aws-exec-cmd) [![Build Status](https://travis-ci.org/codeactual/aws-exec-cmd.png)](https://travis-ci.org/codeactual/aws-exec-cmd)
 
 aws-exec-cmd acquires AWS credentials and runs an arbitrary command, providing it credentials through environment variables. It acquires credentials from the environment, IAM roles (with AssumeRole chaining), or Cognito identity pools.
 
@@ -72,8 +72,13 @@ aws-exec-cmd idp \
   - Each `env` item expects all key/value pairs as one string, and multiple items define multiple build permutations so that all pair sets are tested. Input an entire set, e.g. `AWS_ACCESS_KEY_ID=... AWS_SECRET_ACCESS_KEY=... ROLE_ARN=...`, in the `encrypt` command.
   - Launch `travis` in interactive mode `-i` and input the pair set without trailing newline.
 
-# License
+# Development
+
+## License
 
 [Mozilla Public License Version 2.0](https://www.mozilla.org/en-US/MPL/2.0/) ([About](https://www.mozilla.org/en-US/MPL/), [FAQ](https://www.mozilla.org/en-US/MPL/2.0/FAQ/))
 
-*(Exported from a private monorepo with [transplant](https://github.com/codeactual/transplant).)*
+## Contributing
+
+- Please feel free to submit issues, PRs, questions, and feedback.
+- Although this repository consists of snapshots extracted from a private monorepo using [transplant](https://github.com/codeactual/transplant), PRs are welcome. Standard GitHub workflows are still used.

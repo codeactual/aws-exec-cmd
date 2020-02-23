@@ -50,7 +50,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/codeactual/aws-exec-cmd/idp"
-	"github.com/codeactual/aws-exec-cmd/internal/ldflags"
+	"github.com/codeactual/aws-exec-cmd/internal/cage/cli/handler"
 	"github.com/codeactual/aws-exec-cmd/role"
 )
 
@@ -60,9 +60,9 @@ func main() {
 		Short: "Run a local command with AWS credentials set in the environment",
 	}
 
-	rootCmd.Version = ldflags.Version
-	rootCmd.AddCommand(role.New())
-	rootCmd.AddCommand(idp.New())
+	rootCmd.Version = handler.Version()
+	rootCmd.AddCommand(role.NewCommand())
+	rootCmd.AddCommand(idp.NewCommand())
 
 	if err := rootCmd.Execute(); err != nil {
 		panic(errors.WithStack(err))

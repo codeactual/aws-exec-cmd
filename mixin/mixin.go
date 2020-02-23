@@ -26,7 +26,7 @@ const (
 )
 
 type Exec struct {
-	handler.IO
+	handler.Session
 
 	Pty     bool `usage:"Run in a pseudo-terminal"`
 	Timeout int  `usage:"Number of seconds to wait for a non-[--pty] command to finish"`
@@ -78,6 +78,10 @@ func (m *Exec) Do(ctx context.Context, creds *credentials.Credentials, args []st
 		fmt.Fprintln(m.Err(), execErr)
 		os.Exit(res.Cmd[cmd].Code)
 	}
+}
+
+func New() Exec {
+	return Exec{Session: &handler.DefaultSession{}}
 }
 
 var _ handler.Mixin = (*Exec)(nil)

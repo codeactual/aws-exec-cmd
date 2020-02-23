@@ -27,6 +27,14 @@ func init() {
 	interaction = &sync.Mutex{}
 }
 
+func Lock() {
+	interaction.Lock()
+}
+
+func Unlock() {
+	interaction.Unlock()
+}
+
 type DefaultProvider struct{}
 
 // Promptf displays a formatted message and collects a string response.
@@ -35,8 +43,8 @@ type DefaultProvider struct{}
 // A package-level mutex prevents overlapping prompts.
 // Promptf implements Provider.
 func (d DefaultProvider) Promptf(format string, a ...interface{}) (string, error) {
-	interaction.Lock()
-	defer interaction.Unlock()
+	Lock()
+	defer Unlock()
 
 	fmt.Printf(format+" ", a...)
 
@@ -56,8 +64,8 @@ func (d DefaultProvider) Promptf(format string, a ...interface{}) (string, error
 // A package-level mutex prevents overlapping prompts.
 // PromptHiddenf implements Provider.
 func (d DefaultProvider) PromptHiddenf(format string, a ...interface{}) (string, error) {
-	interaction.Lock()
-	defer interaction.Unlock()
+	Lock()
+	defer Unlock()
 
 	fmt.Printf(format+" \n", a...)
 

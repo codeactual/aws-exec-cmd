@@ -20,7 +20,7 @@ import (
 
 // Handler defines the sub-command flags and logic.
 type Handler struct {
-	handler.IO
+	handler.Session
 
 	Auth         auth.Mixin
 	IdentityPool auth_idp.Mixin
@@ -31,6 +31,8 @@ type Handler struct {
 //
 // It implements cli/handler/cobra.Handler.
 func (h *Handler) Init() handler_cobra.Init {
+	h.Exec = cmd_mixin.New()
+
 	return handler_cobra.Init{
 		Cmd: &cobra.Command{
 			Use:   "idp",
@@ -55,15 +57,17 @@ func (h *Handler) BindFlags(cmd *cobra.Command) []string {
 // Run performs the sub-command logic.
 //
 // It implements cli/handler/cobra.Handler.
-func (h *Handler) Run(ctx context.Context, args []string) {
+func (h *Handler) Run(ctx context.Context, input handler.Input) {
 	creds, credsErr := h.Auth.Credentials(&h.IdentityPool)
 	h.ExitOnErr(credsErr, "failed to acquire credentials", 1)
-	h.Exec.Do(ctx, creds, args)
+	h.Exec.Do(ctx, creds, input.Args)
 }
 
 // New returns a cobra command instance based on Handler.
-func New() *cobra.Command {
-	return handler_cobra.NewHandler(&Handler{})
+func NewCommand() *cobra.Command {
+	return handler_cobra.NewHandler(&Handler{
+		Session: &handler.DefaultSession{},
+	})
 }
 
 var _ handler_cobra.Handler = (*Handler)(nil)
